@@ -6,13 +6,10 @@ import requests
 import nltk
 from nltk.tokenize import word_tokenize
 
-# ======== Download NLTK data if needed ========
-nltk.download('punkt')
-
 # =============== Sample Dataset (Word-Level) ================
 shakespeare_url = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"
 sample_text = requests.get(shakespeare_url).text
-sample_text = sample_text[:20000]  # Use a subset for fast testing
+sample_text = sample_text[:50000]  # Use a subset for fast testing
 
 # ----------------- Tokenizer -----------------
 class WordTokenizer:
@@ -33,7 +30,7 @@ tokenizer = WordTokenizer(sample_text)
 
 # --------------- Custom Dataset -----------------
 class WordDataset(Dataset):
-    def __init__(self, tokens, tokenizer, seq_len=10):
+    def __init__(self, tokens, tokenizer, seq_len=50):
         self.data = tokenizer.encode(tokens)
         self.seq_len = seq_len
     def __len__(self):
@@ -45,7 +42,7 @@ class WordDataset(Dataset):
 
 # ============ Transformer Model Definition ==============
 class BasicTransformer(nn.Module):
-    def __init__(self, vocab_size, embed_dim=64, nhead=4, num_layers=2):
+    def __init__(self, vocab_size, embed_dim=64, nhead=4, num_layers=3):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_dim)
         self.pos_enc = nn.Parameter(torch.randn(1, 1000, embed_dim)) # max sequence length 1000
